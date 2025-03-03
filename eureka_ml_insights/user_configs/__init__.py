@@ -16,6 +16,7 @@ from .flenqa import FlenQA_Experiment_Pipeline
 from .geometer import GEOMETER_PIPELINE
 from .gpqa import GPQA_Experiment_Pipeline, GPQA_PIPELINE_5Run
 from .gsm8k import GSM8K_MUTATED_PIPELINE, GSM8K_PIPELINE
+from .gsmsymbolic import GSMSYMBOLIC_PIPELINE
 from .ifeval import IFEval_PIPELINE
 from .image_understanding.object_detection import (
     OBJECT_DETECTION_PAIRS_LOCAL_PIPELINE,
@@ -139,4 +140,5 @@ __all__ = [
     GSM8K_MUTATED_PIPELINE,
     CRUXEval_PIPELINE,
     CRUXEval_MUTATED_PIPELINE,
+    GSMSYMBOLIC_PIPELINE,
 ]

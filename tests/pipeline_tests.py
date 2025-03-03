@@ -24,6 +24,7 @@ from eureka_ml_insights.user_configs import (
     DNA_PIPELINE,
     GEOMETER_PIPELINE,
     GSM8K_PIPELINE,
+    GSMSYMBOLIC_PIPELINE,
     KITAB_ONE_BOOK_CONSTRAINT_PIPELINE,
     MAZE_PIPELINE,
     MAZE_TEXTONLY_PIPELINE,
@@ -361,6 +362,15 @@ class TEST_CRUXEval_PIPELINE(CRUXEval_PIPELINE):
         return config
 
 
+class TEST_GSMSYMBOLIC_PIPELINE(GSMSYMBOLIC_PIPELINE):
+    # Test config the GSM8K benchmark with TestModel and TestDataLoader
+    def configure_pipeline(self):
+        config = super().configure_pipeline(model_config=ModelConfig(GenericTestModel, {}))
+        self.inference_comp.data_loader_config.class_name = TestDataLoader
+        self.inference_comp.data_loader_config.init_args["n_iter"] = N_ITER
+        return config
+
+
 class TEST_NPHARD_TSP_PIPELINE(NPHARD_TSP_PIPELINE_MULTIPLE_RUNS):
     # Test config the spatial reasoning benchmark with the TestDataLoader
     # with small sample data and a test model
@@ -589,9 +599,15 @@ class GSM8K_PipelineTest(PipelineTest, unittest.TestCase):
         return TEST_GSM8K_PIPELINE().pipeline_config
 
 
+<<<<<<< HEAD
 class CRUXEval_PipelineTest(PipelineTest, unittest.TestCase):
     def get_config(self):
         return TEST_CRUXEval_PIPELINE().pipeline_config
+=======
+class GSMSYMBOLIC_PipelineTest(PipelineTest, unittest.TestCase):
+    def get_config(self):
+        return TEST_GSMSYMBOLIC_PIPELINE().pipeline_config
+>>>>>>> 03d36e67f69dd4cd14efff15590f835dafc13cc1
 
 
 if __name__ == "__main__":
