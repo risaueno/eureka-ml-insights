@@ -21,6 +21,10 @@ from .gsm8k import (
     GSM8K_MUTATED_PIPELINE, 
     GSM8K_PIPELINE
 )
+from .cruxeval import (
+    CRUXEval_PIPELINE,
+    CRUXEval_MUTATED_PIPELINE,
+)
 from .ifeval import IFEval_PIPELINE
 from .image_understanding.object_detection import (
     OBJECT_DETECTION_PAIRS_LOCAL_PIPELINE,
@@ -142,4 +146,6 @@ __all__ = [
     NPHARD_TSP_PIPELINE_MULTIPLE_RUNS,
     GSM8K_PIPELINE,
     GSM8K_MUTATED_PIPELINE,
+    CRUXEval_PIPELINE,
+    CRUXEval_MUTATED_PIPELINE,
 ]
