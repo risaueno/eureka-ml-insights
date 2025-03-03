@@ -6,7 +6,9 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from eureka_ml_insights.data_utils.cruxeval_utils import CRUXEvalGenerateQuestion
+from eureka_ml_insights.data_utils.cruxeval_utils import (
+    CRUXEvalGenerateQuestion,
+)
 
 log = logging.getLogger("CRUXEval_GenerateQuestion_tests")
 
@@ -39,7 +41,6 @@ class TestCRUXEvalGenerateQuestion(unittest.TestCase):
         self.df = pd.DataFrame(columns=["code", "input", "question"])
         self.df["code"] = codes
         self.df["input"] = inputs
-
 
     def test_answerextraction(self):
         transform = CRUXEvalGenerateQuestion("code", "input", "question")

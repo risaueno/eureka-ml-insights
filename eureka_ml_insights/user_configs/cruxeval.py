@@ -26,13 +26,16 @@ from eureka_ml_insights.data_utils import (
     SamplerTransform,
     SequenceTransform,
 )
+from eureka_ml_insights.data_utils.cruxeval_utils import (
+    CRUXEvalGenerateQuestion,
+)
 from eureka_ml_insights.data_utils.data import DataLoader
-from eureka_ml_insights.data_utils.cruxeval_utils import CRUXEvalGenerateQuestion
 from eureka_ml_insights.metrics.metrics_base import ExactMatch
 from eureka_ml_insights.metrics.reports import (
     BiLevelCountAggregator,
     CountAggregator,
 )
+
 
 class CRUXEval_PIPELINE(ExperimentConfig):
     """This class specifies the config for running CRUXEval benchmark on any model"""
