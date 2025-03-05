@@ -599,15 +599,14 @@ class GSM8K_PipelineTest(PipelineTest, unittest.TestCase):
         return TEST_GSM8K_PIPELINE().pipeline_config
 
 
-<<<<<<< HEAD
 class CRUXEval_PipelineTest(PipelineTest, unittest.TestCase):
     def get_config(self):
         return TEST_CRUXEval_PIPELINE().pipeline_config
-=======
+
+
 class GSMSYMBOLIC_PipelineTest(PipelineTest, unittest.TestCase):
     def get_config(self):
         return TEST_GSMSYMBOLIC_PIPELINE().pipeline_config
->>>>>>> 03d36e67f69dd4cd14efff15590f835dafc13cc1
 
 
 if __name__ == "__main__":
