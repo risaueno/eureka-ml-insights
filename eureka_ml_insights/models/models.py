@@ -13,6 +13,7 @@ from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 from eureka_ml_insights.secret_management import get_secret
 
+
 @dataclass
 class Model(ABC):
     """This class is used to define the structure of a model class.
@@ -227,7 +228,7 @@ class RestEndpointModel(EndpointModel, KeyBasedAuthMixIn):
             logging.info(e.info())
             logging.info(e.read().decode("utf8", "ignore"))
         else:
-            logging.info("The request failed with: "+ str(e))
+            logging.info("The request failed with: " + str(e))
         return False
 
 
@@ -248,24 +249,22 @@ class ServerlessAzureRestEndpointModel(EndpointModel, KeyBasedAuthMixIn):
             self.headers = {
                 "Content-Type": "application/json",
                 "Authorization": ("Bearer " + self.api_key),
-                # The behavior of the API when extra parameters are indicated in the payload. 
-                # Using pass-through makes the API to pass the parameter to the underlying model. 
-                # Use this value when you want to pass parameters that you know the underlying model can support. 
+                # The behavior of the API when extra parameters are indicated in the payload.
+                # Using pass-through makes the API to pass the parameter to the underlying model.
+                # Use this value when you want to pass parameters that you know the underlying model can support.
                 # https://learn.microsoft.com/en-us/azure/machine-learning/reference-model-inference-chat-completions?view=azureml-api-2
-                "extra-parameters": "pass-through"
+                "extra-parameters": "pass-through",
             }
         except ValueError:
-            self.bearer_token_provider = get_bearer_token_provider(
-                DefaultAzureCredential(), self.auth_scope
-            )
+            self.bearer_token_provider = get_bearer_token_provider(DefaultAzureCredential(), self.auth_scope)
             self.headers = {
                 "Content-Type": "application/json",
                 "Authorization": ("Bearer " + self.bearer_token_provider()),
-                # The behavior of the API when extra parameters are indicated in the payload. 
-                # Using pass-through makes the API to pass the parameter to the underlying model. 
+                # The behavior of the API when extra parameters are indicated in the payload.
+                # Using pass-through makes the API to pass the parameter to the underlying model.
                 # Use this value when you want to pass parameters that you know the underlying model can support.
                 # https://learn.microsoft.com/en-us/azure/machine-learning/reference-model-inference-chat-completions?view=azureml-api-2
-                "extra-parameters": "pass-through"
+                "extra-parameters": "pass-through",
             }
 
     @abstractmethod
@@ -291,7 +290,7 @@ class ServerlessAzureRestEndpointModel(EndpointModel, KeyBasedAuthMixIn):
             logging.info(e.info())
             logging.info(e.read().decode("utf8", "ignore"))
         else:
-            logging.info("The request failed with: "+ str(e))
+            logging.info("The request failed with: " + str(e))
         return False
 
 
@@ -332,7 +331,6 @@ class LlamaServerlessAzureRestEndpointModel(ServerlessAzureRestEndpointModel):
                 },
             ]
         messages.append({"role": "user", "content": user_content})
-
 
         data = {
             "messages": messages,
@@ -443,9 +441,7 @@ class AzureOpenAIClientMixIn:
     def get_client(self):
         from openai import AzureOpenAI
 
-        token_provider = get_bearer_token_provider(
-            DefaultAzureCredential(), self.auth_scope
-        )
+        token_provider = get_bearer_token_provider(DefaultAzureCredential(), self.auth_scope)
         return AzureOpenAI(
             azure_endpoint=self.url,
             api_version=self.api_version,
@@ -514,19 +510,19 @@ class DirectOpenAIModel(OpenAICommonRequestResponseMixIn, DirectOpenAIClientMixI
 
 
 class OpenAIO1RequestResponseMixIn:
-    
+
     def create_request(self, text_prompt, query_images=None, system_message=None, previous_messages=None):
         messages = []
         if system_message and "o1-preview" in self.model_name:
             logging.warning("System and developer messages are not supported by OpenAI O1 preview model.")
         elif system_message:
-            # Developer messages are the new system messages: 
-            # Starting with o1-2024-12-17, o1 models support developer messages rather than system messages, 
+            # Developer messages are the new system messages:
+            # Starting with o1-2024-12-17, o1 models support developer messages rather than system messages,
             # to align with the chain of command behavior described in the model spec.
-            messages.append({"role": "developer", "content": system_message})        
+            messages.append({"role": "developer", "content": system_message})
         if previous_messages:
             messages.extend(previous_messages)
-        
+
         user_content = text_prompt
         if query_images and "o1-preview" in self.model_name:
             logging.warning("Images are not supported by OpenAI O1 preview model.")
@@ -598,7 +594,6 @@ class AzureOpenAIO1Model(OpenAIO1RequestResponseMixIn, AzureOpenAIClientMixIn, E
     api_version: str = "2023-06-01-preview"
     auth_scope: str = "https://cognitiveservices.azure.com/.default"
 
-
     def __post_init__(self):
         self.client = self.get_client()
 
@@ -639,7 +634,7 @@ class GeminiModel(EndpointModel, KeyBasedAuthMixIn):
             self.model = genai.GenerativeModel(self.model_name)
         else:
             self.model = genai.GenerativeModel(self.model_name, system_instruction=system_message)
-        
+
         if query_images:
             return [text_prompt] + query_images
         else:
@@ -692,12 +687,19 @@ class GeminiModel(EndpointModel, KeyBasedAuthMixIn):
             # For cases where there are some response candidates do_return is still True because in most cases these candidates are incomplete.
             # Trying again may not necessarily help, unless in high temperature regimes.
             if len(self.gemini_response.candidates) > 0:
-                logging.warning(f"The response is not empty and has : {len(self.gemini_response.candidates)} candidates")
-                logging.warning(f"Finish Reason for the first answer candidate is: {self.gemini_response.candidates[0].finish_reason}")
-                logging.warning(f"Safety Ratings for the first answer candidate are: {self.gemini_response.candidates[0].safety_ratings}")
+                logging.warning(
+                    f"The response is not empty and has : {len(self.gemini_response.candidates)} candidates"
+                )
+                logging.warning(
+                    f"Finish Reason for the first answer candidate is: {self.gemini_response.candidates[0].finish_reason}"
+                )
+                logging.warning(
+                    f"Safety Ratings for the first answer candidate are: {self.gemini_response.candidates[0].safety_ratings}"
+                )
             return True
         # Any other case will be re attempted again, do_return = False.
         return False
+
 
 @dataclass
 class TogetherModel(OpenAICommonRequestResponseMixIn, KeyBasedAuthMixIn, EndpointModel):
@@ -709,13 +711,14 @@ class TogetherModel(OpenAICommonRequestResponseMixIn, KeyBasedAuthMixIn, Endpoin
     max_tokens: int = 65536
     top_p: float = 0.95
     presence_penalty: float = 0
-    stop=["<｜end▁of▁sentence｜>"]
+    stop = ["<｜end▁of▁sentence｜>"]
 
     def __post_init__(self):
         from together import Together
+
         self.api_key = self.get_api_key()
         self.client = Together(api_key=self.api_key)
-    
+
     def get_response(self, request):
         start_time = time.time()
         completion = self.client.chat.completions.create(
@@ -724,10 +727,10 @@ class TogetherModel(OpenAICommonRequestResponseMixIn, KeyBasedAuthMixIn, Endpoin
             presence_penalty=self.presence_penalty,
             temperature=self.temperature,
             max_tokens=self.max_tokens,
-            stop = self.stop,
+            stop=self.stop,
             **request,
         )
-        
+
         end_time = time.time()
         openai_response = completion.model_dump()
         self.model_output = openai_response["choices"][0]["message"]["content"]
@@ -738,7 +741,8 @@ class TogetherModel(OpenAICommonRequestResponseMixIn, KeyBasedAuthMixIn, Endpoin
     def handle_request_error(self, e):
         logging.warning(e)
         return False
-    
+
+
 @dataclass
 class HuggingFaceModel(Model):
     """This class is used to run a self-hosted language model via HuggingFace apis."""
@@ -760,8 +764,8 @@ class HuggingFaceModel(Model):
         self.get_model()
 
     def get_model(self):
-        from transformers import AutoModelForCausalLM, AutoTokenizer
         import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
 
         quantization_config = None
         if self.quantize:
@@ -781,7 +785,6 @@ class HuggingFaceModel(Model):
             device_map=self.device,
             use_flash_attention_2=self.use_flash_attn,
         )
-
 
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, use_fast=False)
 
@@ -894,6 +897,7 @@ class Phi4HFModel(HuggingFaceModel):
             return f"<|im_start|>system<|im_sep|>\n{system_message}<|im_start|>user<|im_sep|>\n{text_prompt}<|im_end|>\n<|im_start|>assistant<|im_sep|>"
         else:
             return f"<|im_start|>user<|im_sep|>\n{text_prompt}<|im_end|>\n<|im_start|>assistant<|im_sep|>"
+
 
 @dataclass
 class LLaVAHuggingFaceModel(HuggingFaceModel):
@@ -1105,7 +1109,7 @@ class vLLMModel(Model):
             gpu_memory_utilization=self.gpu_memory_utilization,
             cpu_offload_gb=self.cpu_offload_gb,
         )
-        
+
     def _generate(self, text_prompt, query_images=None):
         from vllm import SamplingParams
 
@@ -1115,11 +1119,11 @@ class vLLMModel(Model):
             top_k=self.top_k,
             max_tokens=self.max_tokens,
         )
-    
+
         start_time = time.time()
         outputs = self.model.generate(text_prompt, sampling_params)
         end_time = time.time()
-        
+
         self.model_output = outputs[0].outputs[0].text
 
         self.response_time = end_time - start_time
@@ -1222,17 +1226,16 @@ class DeltaGPTModel(Model):
 
     model_type: str = None
     model_path: str = None
-    #base_model_name: str = None
+    # base_model_name: str = None
     device: str = "cpu"
     max_tokens: int = 2000
     temperature: float = 0.3
     top_p: float = 0.7
     do_sample: bool = True
-    
+
     def __post_init__(self):
         self.device = self.pick_available_device()
         self.get_model()
-
 
     def pick_available_device(self):
         """
@@ -1259,13 +1262,11 @@ class DeltaGPTModel(Model):
 
     def get_model(self):
         from deltaGPT.utils.model_utils import CompressedModel
+
         torch_dtype = "float32"
 
         model, tokenizer = CompressedModel.from_pretrained(
-            model_type=self.model_type,
-            path=self.model_path,
-            torch_dtype=torch_dtype,
-            local_model_path=self.model_path
+            model_type=self.model_type, path=self.model_path, torch_dtype=torch_dtype, local_model_path=self.model_path
         )
         model = model.peft_model
 
@@ -1277,10 +1278,10 @@ class DeltaGPTModel(Model):
         self.model = model
         self.model.to(self.device)
 
-
     def generate(self, text_prompt, **kwargs):
         """Generates a response given a text prompt."""
         import torch
+
         inputs = self.tokenizer(text_prompt, return_tensors="pt", padding=True, truncation=True).to(self.device)
 
         self.model.tie_weights = lambda: None
@@ -1290,12 +1291,13 @@ class DeltaGPTModel(Model):
 
         attention_mask = inputs["attention_mask"]
         import time
+
         start_time = time.time()
-        
+
         output_ids = self.model.generate(
             inputs["input_ids"],
             attention_mask=attention_mask,  # Explicitly pass attention mask
-            position_ids=inputs["position_ids"], # Explicitly pass position ids
+            position_ids=inputs["position_ids"],  # Explicitly pass position ids
             max_new_tokens=1000,
             temperature=0.7,
             top_p=0.9,
