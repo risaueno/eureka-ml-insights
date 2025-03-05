@@ -16,7 +16,8 @@ from .models import (
     RestEndpointModel,
     TestModel,
     vLLMModel,
-    TogetherModel
+    TogetherModel,
+    DeltaGPTModel,
 )
 
 __all__ = [
@@ -37,5 +38,6 @@ __all__ = [
     RestEndpointModel,
     TestModel,
     vLLMModel,
-    TogetherModel
+    TogetherModel,
+    DeltaGPTModel,
 ]

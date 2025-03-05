@@ -5,6 +5,7 @@ You can also add your custom models here by following the same pattern as the ex
 from eureka_ml_insights.models import (
     AzureOpenAIO1Model,
     ClaudeModel,
+    DeltaGPTModel,
     DirectOpenAIModel,
     DirectOpenAIO1Model,
     GeminiModel,
@@ -28,6 +29,95 @@ from .config import ModelConfig
 
 # Test model
 TEST_MODEL_CONFIG = ModelConfig(TestModel, {})
+
+# Local models
+
+DELTALM_PHI = ModelConfig(
+    DeltaGPTModel,
+    {
+        "model_type": "phi_3.5_mini",  # "microsoft/Phi-3.5-mini-instruct"
+        "model_path": "/home/t-uenorisa/eureka-ml-insights/data/liana_models/phi_ultrachat_100_8layers2",
+    },
+)
+
+DELTALM_QWEN = ModelConfig(
+    DeltaGPTModel,
+    {
+        "model_type": "qwen_3B",  #"deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+        "model_path": "/home/t-uenorisa/eureka-ml-insights/data/liana_models/deltaQwen_1b_alpaca",
+    },
+)
+
+DELTALM_LLAMA = ModelConfig(
+    DeltaGPTModel,
+    {   "model_type": "llama_3B",  # "meta-llama/Llama-3.2-3B-Instruct"s
+        "model_path": "/home/t-uenorisa/eureka-ml-insights/data/liana_models/llama_3_7lay/llama_3_7lay",
+    },
+)
+
+# GCR OpenAI models
+# API version: https://learn.microsoft.com/en-us/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
+# Models: https://dev.azure.com/msresearch/MSR%20Engineering/_wiki/wikis/MSR-Engineering.wiki/13498/Deployment-Model-Information
+
+OAI_GPT4_MSR_AZURE_CONFIG = ModelConfig(
+    AzureOpenAIModel,
+    {
+        "model_name": "gpt-4-32k_0613",
+        "url": "https://trapi.research.microsoft.com/msrc/shared",
+        "api_version": "2024-10-21",
+        "auth_scope": "api://trapi/.default",
+    },
+)
+
+OAI_GPT3_5_MSR_AZURE_CONFIG = ModelConfig(
+    AzureOpenAIModel,
+    {
+        "model_name": "gpt-35-turbo_1106",
+        "url": "https://trapi.research.microsoft.com/msrc/shared",
+        "api_version": "2024-10-21",
+        "auth_scope": "api://trapi/.default",
+    },
+)
+
+OAI_GPTO1PREVIEW_MSR_AZURE_CONFIG = ModelConfig(
+    AzureOpenAIModel,
+    {
+        "model_name": "o1-preview_2024-09-12",
+        "url": "https://trapi.research.microsoft.com/msrc/shared",
+        "api_version": "2024-10-21",
+        "auth_scope": "api://trapi/.default",
+    },
+)
+
+OAI_GPT4O_MSR_AZURE_CONFIG = ModelConfig(
+    AzureOpenAIModel,
+    {
+        "model_name": "gpt-4o_2024-08-06",
+        "url": "https://trapi.research.microsoft.com/msrc/shared",
+        "api_version": "2024-10-21",
+        "auth_scope": "api://trapi/.default",
+    },
+)
+
+OAI_GPTO3MINI_MSR_AZURE_CONFIG = ModelConfig(
+    AzureOpenAIModel,
+    {
+        "model_name": "o3-mini_2025-01-31",
+        "url": "https://trapi.research.microsoft.com/msrc/shared",
+        "api_version": "2025-01-31",
+        "auth_scope": "api://trapi/.default",
+    },
+)
+
+OAI_GPTO1_MSR_AZURE_CONFIG = ModelConfig(
+    AzureOpenAIModel,
+    {
+        "model_name": "o1_2024-12-17",
+        "url": "https://trapi.research.microsoft.com/msrc/shared",
+        "api_version": "2024-12-17",
+        "auth_scope": "api://trapi/.default",
+    },
+)
 
 # Together models
 TOGETHER_SECRET_KEY_PARAMS = {

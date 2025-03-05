@@ -1217,6 +1217,107 @@ class ClaudeModel(EndpointModel, KeyBasedAuthMixIn):
 
 
 @dataclass
+class DeltaGPTModel(Model):
+    """This class loads and runs a locally stored compression model."""
+
+    model_type: str = None
+    model_path: str = None
+    #base_model_name: str = None
+    device: str = "cpu"
+    max_tokens: int = 2000
+    temperature: float = 0.3
+    top_p: float = 0.7
+    do_sample: bool = True
+    
+    def __post_init__(self):
+        self.device = self.pick_available_device()
+        self.get_model()
+
+
+    def pick_available_device(self):
+        """
+        This method will enumerate all GPU devices and return the one with the lowest utilization.
+        This is useful in running locally hosted HuggingFace models on multi-gpu machines.
+        """
+        import numpy as np
+        import torch
+
+        device = "cpu"
+        if torch.cuda.is_available():
+            utilizations = []
+            for i in range(torch.cuda.device_count()):
+                util = torch.cuda.utilization(f"cuda:{i}")
+                utilizations.append(util)
+            gpu_index = np.argmin(utilizations)
+            device = f"cuda:{gpu_index}"
+        else:
+            device = "cpu"
+            logging.warning("No GPU available, using CPU.")
+        logging.info(f"Using device {device} for model self hosting")
+
+        return device
+
+    def get_model(self):
+        from deltaGPT.utils.model_utils import CompressedModel
+        torch_dtype = "float32"
+
+        model, tokenizer = CompressedModel.from_pretrained(
+            model_type=self.model_type,
+            path=self.model_path,
+            torch_dtype=torch_dtype,
+            local_model_path=self.model_path
+        )
+        model = model.peft_model
+
+        # Set padding token
+        tokenizer.pad_token = tokenizer.eos_token
+        model.config.pad_token_id = tokenizer.pad_token_id
+
+        self.tokenizer = tokenizer
+        self.model = model
+        self.model.to(self.device)
+
+
+    def generate(self, text_prompt, **kwargs):
+        """Generates a response given a text prompt."""
+        import torch
+        inputs = self.tokenizer(text_prompt, return_tensors="pt", padding=True, truncation=True).to(self.device)
+
+        self.model.tie_weights = lambda: None
+
+        if "position_ids" not in inputs:
+            inputs["position_ids"] = torch.arange(inputs["input_ids"].shape[1], device=self.device).unsqueeze(0)
+
+        attention_mask = inputs["attention_mask"]
+        import time
+        start_time = time.time()
+        
+        output_ids = self.model.generate(
+            inputs["input_ids"],
+            attention_mask=attention_mask,  # Explicitly pass attention mask
+            position_ids=inputs["position_ids"], # Explicitly pass position ids
+            max_new_tokens=1000,
+            temperature=0.7,
+            top_p=0.9,
+            do_sample=True,
+        )
+        end_time = time.time()
+
+        sequence_length = inputs["input_ids"].shape[1]
+        new_output_ids = output_ids[:, sequence_length:]
+        model_output = self.tokenizer.decode(new_output_ids[0], skip_special_tokens=True)
+        response_time = end_time - start_time
+        is_valid = True
+
+        return {
+            "model_output": model_output,
+            "is_valid": is_valid,
+            "response_time": response_time,
+            "n_output_tokens": self.count_tokens(),
+        }
+
+
+@dataclass
 class TestModel(Model):
     # This class is used for testing purposes only. It only waits for a specified time and returns a response.
     response_time: float = 0.1
