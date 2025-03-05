@@ -2,6 +2,7 @@ from .models import (
     AzureOpenAIModel,
     AzureOpenAIO1Model,
     ClaudeModel,
+    DeltaGPTModel,
     DirectOpenAIModel,
     DirectOpenAIO1Model,
     GeminiModel,
@@ -15,8 +16,8 @@ from .models import (
     Phi4HFModel,
     RestEndpointModel,
     TestModel,
+    TogetherModel,
     vLLMModel,
-    TogetherModel
 )
 
 __all__ = [
@@ -37,5 +38,6 @@ __all__ = [
     RestEndpointModel,
     TestModel,
     vLLMModel,
-    TogetherModel
+    TogetherModel,
+    DeltaGPTModel,
 ]
