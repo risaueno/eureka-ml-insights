@@ -1,10 +1,10 @@
 from .models import (
     AzureOpenAIModel,
-    AzureOpenAIO1Model,
+    AzureOpenAIOModel,
     ClaudeModel,
     DeltaGPTModel,
     DirectOpenAIModel,
-    DirectOpenAIO1Model,
+    DirectOpenAIOModel,
     GeminiModel,
     HuggingFaceModel,
     KeyBasedAuthMixIn,
@@ -21,8 +21,8 @@ from .models import (
 )
 
 __all__ = [
-    AzureOpenAIO1Model,
-    DirectOpenAIO1Model,
+    AzureOpenAIOModel,
+    DirectOpenAIOModel,
     HuggingFaceModel,
     KeyBasedAuthMixIn,
     LLaVAHuggingFaceModel,
